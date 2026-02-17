@@ -12,7 +12,7 @@ class Elspais < Formula
 
   def install
     venv = virtualenv_create(libexec, "python3.12")
-    system libexec/"bin/pip", "install", "--no-cache-dir", "elspais[all]==#{version}"
+    venv.pip_install "elspais[all]==#{version}"
     bin.install_symlink Dir[libexec/"bin/elspais"]
   end
 
