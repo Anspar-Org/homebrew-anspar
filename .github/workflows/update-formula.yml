@@ -25,6 +25,9 @@ jobs:
         with:
           python-version: '3.12'
 
+      - name: Install pip-tools
+        run: pip install pip-tools
+
       - name: Determine version
         id: version
         run: |
@@ -40,69 +43,140 @@ jobs:
         env:
           VERSION: ${{ steps.version.outputs.version }}
         run: |
-          python3 << 'EOF'
-          import json, os, re, urllib.request
+          python3 << 'PYEOF'
+          import json, os, re, subprocess, urllib.request
 
           version = os.environ["VERSION"]
 
-          # Fetch elspais sdist info
+          # --- Fetch elspais sdist info ---
           with urllib.request.urlopen(f"https://pypi.org/pypi/elspais/{version}/json") as r:
               pkg = json.loads(r.read())
           sdist = next(f for f in pkg["urls"] if f["packagetype"] == "sdist")
           sdist_url = sdist["url"]
           sdist_sha = sdist["digests"]["sha256"]
-
-          # Fetch latest tomlkit info
-          with urllib.request.urlopen("https://pypi.org/pypi/tomlkit/json") as r:
-              tk = json.loads(r.read())
-          tk_sdist = next(f for f in tk["urls"] if f["packagetype"] == "sdist")
-          tk_url = tk_sdist["url"]
-          tk_sha = tk_sdist["digests"]["sha256"]
-
           print(f"elspais {version}: {sdist_sha[:16]}...")
-          print(f"tomlkit {tk['info']['version']}: {tk_sha[:16]}...")
 
-          # Update both formulas
-          for formula_path in ["Formula/elspais.rb", "Formula/elspais-core.rb"]:
-              with open(formula_path) as f:
-                  content = f.read()
+          # --- Resolve all dependencies for elspais[all] ---
+          result = subprocess.run(
+              ["pip-compile", "--no-header", "--no-annotate", "--output-file=-", "-"],
+              input=f"elspais[all]=={version}\n",
+              capture_output=True, text=True
+          )
+          if result.returncode != 0:
+              raise RuntimeError(f"pip-compile failed:\n{result.stderr}")
 
-              # Update elspais URL and SHA (first occurrence)
+          deps = {}
+          for line in result.stdout.strip().split("\n"):
+              line = line.strip()
+              if not line or line.startswith("#"):
+                  continue
+              # Strip extras like pyjwt[crypto]==2.11.0 -> pyjwt==2.11.0
+              clean = re.sub(r'\[.*?\]', '', line)
+              if "==" not in clean:
+                  continue
+              name, ver = clean.split("==", 1)
+              if name == "elspais":
+                  continue
+              deps[name] = ver
+          print(f"Resolved {len(deps)} dependencies")
+
+          # --- Fetch sdist URL and SHA for each dependency ---
+          resources = []
+          for name, ver in sorted(deps.items()):
+              try:
+                  with urllib.request.urlopen(f"https://pypi.org/pypi/{name}/{ver}/json") as r:
+                      dep_pkg = json.loads(r.read())
+                  dep_sdist = next(
+                      (f for f in dep_pkg["urls"] if f["packagetype"] == "sdist"), None
+                  )
+                  if dep_sdist:
+                      resources.append((name, dep_sdist["url"], dep_sdist["digests"]["sha256"]))
+                      print(f"  {name}=={ver}: OK")
+                  else:
+                      print(f"  WARNING: No sdist for {name}=={ver}")
+              except Exception as e:
+                  print(f"  ERROR: {name}=={ver}: {e}")
+                  raise
+
+          # --- Generate resource blocks ---
+          resource_lines = []
+          for name, url, sha in resources:
+              resource_lines.append(f'  resource "{name}" do')
+              resource_lines.append(f'    url "{url}"')
+              resource_lines.append(f'    sha256 "{sha}"')
+              resource_lines.append(f'  end')
+              resource_lines.append('')
+          resource_block = "\n".join(resource_lines)
+
+          # --- Update elspais.rb (full formula with all extras) ---
+          with open("Formula/elspais.rb") as f:
+              content = f.read()
+
+          # Update main URL and SHA
+          content = re.sub(
+              r'url "https://files\.pythonhosted\.org/packages/[^"]+/elspais-[^"]+\.tar\.gz"',
+              f'url "{sdist_url}"',
+              content,
+              count=1,
+          )
+          content = re.sub(
+              r'(  sha256 ")[a-f0-9]+(".*\n  license)',
+              rf'\g<1>{sdist_sha}\2',
+              content,
+              count=1,
+          )
+
+          # Replace all resource blocks (between depends_on and def install)
+          content = re.sub(
+              r'(  depends_on "python@3\.12"\n)\n(?:  resource .*?  end\n\n)*',
+              rf'\1\n{resource_block}',
+              content,
+              flags=re.DOTALL,
+          )
+
+          with open("Formula/elspais.rb", "w") as f:
+              f.write(content)
+          print(f"Updated Formula/elspais.rb")
+
+          # --- Update elspais-core.rb (core only: elspais + tomlkit) ---
+          with open("Formula/elspais-core.rb") as f:
+              content = f.read()
+
+          # Update elspais URL and SHA (first occurrence)
+          content = re.sub(
+              r'url "https://files\.pythonhosted\.org/packages/[^"]+/elspais-[^"]+\.tar\.gz"',
+              f'url "{sdist_url}"',
+              content,
+              count=1,
+          )
+          content = re.sub(
+              r'sha256 "[a-f0-9]+"',
+              f'sha256 "{sdist_sha}"',
+              content,
+              count=1,
+          )
+
+          # Update tomlkit resource if present
+          if "tomlkit" in deps and 'resource "tomlkit"' in content:
+              tk_name, tk_url, tk_sha = next(r for r in resources if r[0] == "tomlkit")
               content = re.sub(
-                  r'url "https://files\.pythonhosted\.org/packages/[^"]+/elspais-[^"]+\.tar\.gz"',
-                  f'url "{sdist_url}"',
+                  r'(resource "tomlkit" do\s+url ")[^"]+(")',
+                  rf'\g<1>{tk_url}\2',
                   content,
-                  count=1,
               )
-              content = re.sub(
+              parts = content.split('resource "tomlkit"', 1)
+              parts[1] = re.sub(
                   r'sha256 "[a-f0-9]+"',
-                  f'sha256 "{sdist_sha}"',
-                  content,
+                  f'sha256 "{tk_sha}"',
+                  parts[1],
                   count=1,
               )
+              content = 'resource "tomlkit"'.join(parts)
 
-              # Update tomlkit resource (core formula)
-              if "resource \"tomlkit\"" in content:
-                  # Find the tomlkit resource block and update url + sha
-                  content = re.sub(
-                      r'(resource "tomlkit" do\s+url ")[^"]+(")',
-                      rf'\g<1>{tk_url}\2',
-                      content,
-                  )
-                  # Update sha256 inside tomlkit block (second sha256 in file)
-                  parts = content.split('resource "tomlkit"', 1)
-                  parts[1] = re.sub(
-                      r'sha256 "[a-f0-9]+"',
-                      f'sha256 "{tk_sha}"',
-                      parts[1],
-                      count=1,
-                  )
-                  content = 'resource "tomlkit"'.join(parts)
-
-              with open(formula_path, "w") as f:
-                  f.write(content)
-              print(f"Updated {formula_path}")
-          EOF
+          with open("Formula/elspais-core.rb", "w") as f:
+              f.write(content)
+          print(f"Updated Formula/elspais-core.rb")
+          PYEOF
 
       - name: Commit and push directly to main
         run: |
