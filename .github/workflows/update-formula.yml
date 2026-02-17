@@ -140,7 +140,7 @@ jobs:
               count=1,
           )
           content = re.sub(
-              r'(  depends_on "python@3\.12"\n)\n(?:  resource .*?  end\n\n)*',
+              r'(  depends_on "python@3\.12"\n(?:.*?(?:conflicts_with|head)\s[^\n]*\n)*)\n(?:  resource .*?  end\n\n)*',
               rf'\1\n{resource_block}',
               content,
               flags=re.DOTALL,
