@@ -7,6 +7,11 @@ class ElspaisCore < Formula
   sha256 "ed6f5eb18ec2344231d609718c86c700f6e2b5a6c0383a9ca3490b9897c54232"
   license "AGPL-3.0-only"
 
+  bottle do
+    root_url "https://github.com/Anspar-Org/homebrew-anspar/releases/download/elspais-0.73.0"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "6bc93943cbad7445e634595be8cd19a13c7718af7aa2438e9bbc0598982471de"
+  end
+
   depends_on "python@3.12"
 
   conflicts_with "elspais", because: "both install the `elspais` binary"

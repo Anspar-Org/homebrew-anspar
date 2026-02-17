@@ -8,6 +8,11 @@ class Elspais < Formula
   license "AGPL-3.0-only"
   head "https://github.com/Anspar-Org/elspais.git", branch: "main"
 
+  bottle do
+    root_url "https://github.com/Anspar-Org/homebrew-anspar/releases/download/elspais-0.73.0"
+    sha256 cellar: :any, arm64_sequoia: "f6207507a68aaffed6f167ad2bff6905a5d1f31e92cfc3dd706ab651b2c68b39"
+  end
+
   depends_on "rust" => :build
   depends_on "python@3.12"
 
