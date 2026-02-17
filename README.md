@@ -1,79 +1,45 @@
-# Homebrew Tap for elspais
+# Homebrew Tap for Anspar
 
-[elspais](https://github.com/anspar/elspais) is a requirements validation and traceability tool. L-Space connects all libraries.
+Official Homebrew tap for [Anspar-Org](https://github.com/Anspar-Org) tools.
 
 ## Install
 
 ```bash
-brew tap anspar-org/elspais
-brew install elspais
+brew tap anspar-org/anspar
 ```
 
-This installs elspais with **all optional features** including:
+### elspais
 
-- **MCP server** for AI-driven requirements management (Claude Desktop & Claude Code)
-- **Trace view** for HTML traceability reports
-- **Trace review** Flask-based review server
-- **Shell completion** for bash, zsh, and fish
-
-### Core-only install
-
-If you only need the core validation tool (no MCP, no HTML reports):
+Requirements validation and traceability tool — L-Space connects all libraries.
 
 ```bash
-brew install anspar-org/elspais/elspais-core
+brew install anspar-org/anspar/elspais
+```
+
+Installs with **all optional features**: MCP server, HTML trace view, Flask review server, shell completion.
+
+Core-only (no MCP, no HTML reports):
+
+```bash
+brew install anspar-org/anspar/elspais-core
+```
+
+### anspar-wf
+
+Development toolchain for requirement-traceable software projects.
+
+```bash
+brew install anspar-org/anspar/anspar-wf
 ```
 
 ## Upgrade
 
 ```bash
-brew upgrade elspais
-```
-
-## MCP Server Setup
-
-### Claude Desktop
-
-Add to your Claude Desktop config:
-
-**macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
-
-```json
-{
-  "mcpServers": {
-    "elspais": {
-      "command": "/opt/homebrew/bin/elspais",
-      "args": ["mcp", "serve"],
-      "cwd": "/path/to/your/project"
-    }
-  }
-}
-```
-
-### Claude Code
-
-Add to your project's `.mcp.json`:
-
-```json
-{
-  "mcpServers": {
-    "elspais": {
-      "command": "/opt/homebrew/bin/elspais",
-      "args": ["mcp", "serve"]
-    }
-  }
-}
-```
-
-Set `cwd` to the directory containing your `.elspais.toml` config file.
-
-## Quick Start
-
-```bash
-elspais docs quickstart
+brew upgrade anspar-org/anspar/elspais
+brew upgrade anspar-org/anspar/anspar-wf
 ```
 
 ## Documentation
 
-- [elspais on PyPI](https://pypi.org/project/elspais/)
-- [GitHub Repository](https://github.com/anspar/elspais)
+- [elspais on PyPI](https://pypi.org/project/elspais/) | [GitHub](https://github.com/Anspar-Org/elspais)
+- [anspar-wf on PyPI](https://pypi.org/project/anspar-wf/) | [GitHub](https://github.com/Anspar-Org/anspar-wf)

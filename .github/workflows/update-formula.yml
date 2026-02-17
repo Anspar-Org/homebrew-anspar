@@ -5,8 +5,15 @@ on:
     types: [update-formula]
   workflow_dispatch:
     inputs:
+      package:
+        description: 'Package to update (elspais or anspar-wf)'
+        required: true
+        type: choice
+        options:
+          - elspais
+          - anspar-wf
       version:
-        description: 'Version to update to (e.g., 0.51.0)'
+        description: 'Version to update to (e.g., 0.72.0)'
         required: true
         type: string
 
@@ -28,20 +35,26 @@ jobs:
       - name: Install pip-tools
         run: pip install pip-tools
 
-      - name: Determine version
-        id: version
+      - name: Determine package and version
+        id: params
         run: |
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            PACKAGE="${{ inputs.package }}"
             VERSION="${{ inputs.version }}"
           else
+            PACKAGE="${{ github.event.client_payload.package }}"
             VERSION="${{ github.event.client_payload.version }}"
           fi
+          # Default to elspais for backwards compatibility
+          PACKAGE="${PACKAGE:-elspais}"
+          echo "package=${PACKAGE}" >> "$GITHUB_OUTPUT"
           echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
-          echo "Updating to elspais v${VERSION}"
+          echo "Updating ${PACKAGE} to v${VERSION}"
 
-      - name: Fetch package info and update formulas
+      - name: Update elspais formulas
+        if: steps.params.outputs.package == 'elspais'
         env:
-          VERSION: ${{ steps.version.outputs.version }}
+          VERSION: ${{ steps.params.outputs.version }}
         run: |
           python3 << 'PYEOF'
           import json, os, re, subprocess, urllib.request
@@ -70,15 +83,12 @@ jobs:
               line = line.strip()
               if not line or line.startswith("#"):
                   continue
-              # Strip extras like pyjwt[crypto]==2.11.0 -> pyjwt==2.11.0
               clean = re.sub(r'\[.*?\]', '', line)
               if "==" not in clean:
                   continue
               name, ver = clean.split("==", 1)
               if name == "elspais":
                   continue
-              # Skip pyjwt[crypto] chain - MCP only needs pyjwt (no crypto extra),
-              # and cryptography/cffi require Rust to build from source
               if name in ("cryptography", "cffi", "pycparser"):
                   print(f"  Skipping {name}=={ver} (crypto chain, not needed)")
                   continue
@@ -117,7 +127,6 @@ jobs:
           with open("Formula/elspais.rb") as f:
               content = f.read()
 
-          # Update main URL and SHA
           content = re.sub(
               r'url "https://files\.pythonhosted\.org/packages/[^"]+/elspais-[^"]+\.tar\.gz"',
               f'url "{sdist_url}"',
@@ -130,8 +139,6 @@ jobs:
               content,
               count=1,
           )
-
-          # Replace all resource blocks (between depends_on and def install)
           content = re.sub(
               r'(  depends_on "python@3\.12"\n)\n(?:  resource .*?  end\n\n)*',
               rf'\1\n{resource_block}',
@@ -147,7 +154,6 @@ jobs:
           with open("Formula/elspais-core.rb") as f:
               content = f.read()
 
-          # Update elspais URL and SHA (first occurrence)
           content = re.sub(
               r'url "https://files\.pythonhosted\.org/packages/[^"]+/elspais-[^"]+\.tar\.gz"',
               f'url "{sdist_url}"',
@@ -161,7 +167,6 @@ jobs:
               count=1,
           )
 
-          # Update tomlkit resource if present
           if "tomlkit" in deps and 'resource "tomlkit"' in content:
               tk_name, tk_url, tk_sha = next(r for r in resources if r[0] == "tomlkit")
               content = re.sub(
@@ -183,10 +188,108 @@ jobs:
           print(f"Updated Formula/elspais-core.rb")
           PYEOF
 
+      - name: Update anspar-wf formula
+        if: steps.params.outputs.package == 'anspar-wf'
+        env:
+          VERSION: ${{ steps.params.outputs.version }}
+        run: |
+          python3 << 'PYEOF'
+          import json, os, re, subprocess, urllib.request
+
+          version = os.environ["VERSION"]
+
+          # --- Fetch anspar-wf sdist info ---
+          with urllib.request.urlopen(f"https://pypi.org/pypi/anspar-wf/{version}/json") as r:
+              pkg = json.loads(r.read())
+          sdist = next(f for f in pkg["urls"] if f["packagetype"] == "sdist")
+          sdist_url = sdist["url"]
+          sdist_sha = sdist["digests"]["sha256"]
+          print(f"anspar-wf {version}: {sdist_sha[:16]}...")
+
+          # --- Resolve all dependencies ---
+          result = subprocess.run(
+              ["pip-compile", "--no-header", "--no-annotate", "--output-file=-", "-"],
+              input=f"anspar-wf=={version}\n",
+              capture_output=True, text=True
+          )
+          if result.returncode != 0:
+              raise RuntimeError(f"pip-compile failed:\n{result.stderr}")
+
+          deps = {}
+          for line in result.stdout.strip().split("\n"):
+              line = line.strip()
+              if not line or line.startswith("#"):
+                  continue
+              clean = re.sub(r'\[.*?\]', '', line)
+              if "==" not in clean:
+                  continue
+              name, ver = clean.split("==", 1)
+              if name in ("anspar-wf", "anspar_wf"):
+                  continue
+              deps[name] = ver
+          print(f"Resolved {len(deps)} dependencies")
+
+          # --- Fetch sdist URL and SHA for each dependency ---
+          resources = []
+          for name, ver in sorted(deps.items()):
+              try:
+                  with urllib.request.urlopen(f"https://pypi.org/pypi/{name}/{ver}/json") as r:
+                      dep_pkg = json.loads(r.read())
+                  dep_sdist = next(
+                      (f for f in dep_pkg["urls"] if f["packagetype"] == "sdist"), None
+                  )
+                  if dep_sdist:
+                      resources.append((name, dep_sdist["url"], dep_sdist["digests"]["sha256"]))
+                      print(f"  {name}=={ver}: OK")
+                  else:
+                      print(f"  WARNING: No sdist for {name}=={ver}")
+              except Exception as e:
+                  print(f"  ERROR: {name}=={ver}: {e}")
+                  raise
+
+          # --- Generate resource blocks ---
+          resource_lines = []
+          for name, url, sha in resources:
+              resource_lines.append(f'  resource "{name}" do')
+              resource_lines.append(f'    url "{url}"')
+              resource_lines.append(f'    sha256 "{sha}"')
+              resource_lines.append(f'  end')
+              resource_lines.append('')
+          resource_block = "\n".join(resource_lines)
+
+          # --- Update anspar_wf.rb ---
+          with open("Formula/anspar_wf.rb") as f:
+              content = f.read()
+
+          content = re.sub(
+              r'url "https://files\.pythonhosted\.org/packages/[^"]+/anspar[_-]wf-[^"]+\.tar\.gz"',
+              f'url "{sdist_url}"',
+              content,
+              count=1,
+          )
+          content = re.sub(
+              r'(  sha256 ")[a-f0-9]+(".*\n  license)',
+              rf'\g<1>{sdist_sha}\2',
+              content,
+              count=1,
+          )
+          content = re.sub(
+              r'(  depends_on "python@3\.12"\n)\n(?:  resource .*?  end\n\n)*',
+              rf'\1\n{resource_block}',
+              content,
+              flags=re.DOTALL,
+          )
+
+          with open("Formula/anspar_wf.rb", "w") as f:
+              f.write(content)
+          print(f"Updated Formula/anspar_wf.rb")
+          PYEOF
+
       - name: Create branch and open PR
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          VERSION: ${{ steps.version.outputs.version }}
+          PACKAGE: ${{ steps.params.outputs.package }}
+          VERSION: ${{ steps.params.outputs.version }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -195,12 +298,12 @@ jobs:
             echo "No changes to commit"
             exit 0
           fi
-          BRANCH="update-v${VERSION}"
+          BRANCH="update-${PACKAGE}-v${VERSION}"
           git checkout -b "${BRANCH}"
-          git commit -m "chore: Update elspais to ${VERSION}"
+          git commit -m "chore: Update ${PACKAGE} to ${VERSION}"
           git push -u origin "${BRANCH}"
           gh pr create \
-            --title "Update elspais to ${VERSION}" \
-            --body "Automated formula update for elspais v${VERSION}. Bottles will be built automatically." \
+            --title "Update ${PACKAGE} to ${VERSION}" \
+            --body "Automated formula update for ${PACKAGE} v${VERSION}. Bottles will be built automatically." \
             --base main \
             --head "${BRANCH}"

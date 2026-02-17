@@ -36,18 +36,22 @@ jobs:
 
       - run: brew test-bot --only-setup
 
-      - name: Extract version from PR title
-        id: version
+      - name: Extract package and version from PR title
+        id: pr-info
         run: |
-          VERSION=$(echo "${{ github.event.pull_request.title }}" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
+          # PR title format: "Update <package> to <version>"
+          TITLE="${{ github.event.pull_request.title }}"
+          PACKAGE=$(echo "$TITLE" | sed -n 's/^Update \(.*\) to .*/\1/p')
+          VERSION=$(echo "$TITLE" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
+          echo "package=${PACKAGE}" >> "$GITHUB_OUTPUT"
           echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
-          echo "Detected version: ${VERSION}"
+          echo "Detected: ${PACKAGE} v${VERSION}"
 
       - name: Build bottle
         run: |
           brew test-bot --only-formulae --only-json-tab \
-            --tap="${{ github.repository_owner }}/elspais" \
-            --root-url="https://github.com/${{ github.repository }}/releases/download/elspais-${{ steps.version.outputs.version }}"
+            --tap="${{ github.repository_owner }}/anspar" \
+            --root-url="https://github.com/${{ github.repository }}/releases/download/${{ steps.pr-info.outputs.package }}-${{ steps.pr-info.outputs.version }}"
 
       - name: Upload bottles as artifact
         if: always()
