@@ -6,6 +6,7 @@ class Elspais < Formula
   url "https://files.pythonhosted.org/packages/f6/11/20503e7a80fdff6bb2941581bdcbafd386021fa723bf836046048edfd2b0/elspais-0.72.0.tar.gz"
   sha256 "927b66c77cd6d373c94fe79cf97cee3dc309f89205b44e285dd04378fc94ca2d"
   license "AGPL-3.0-only"
+  revision 1
   head "https://github.com/Anspar-Org/elspais.git", branch: "main"
 
   depends_on "rust" => :build
@@ -190,6 +191,7 @@ class Elspais < Formula
     url "https://files.pythonhosted.org/packages/5a/70/1469ef1d3542ae7c2c7b72bd5e3a4e6ee69d7978fa8a3af05a38eca5becf/werkzeug-3.1.5.tar.gz"
     sha256 "6a548b0e88955dd07ccb25539d7d0cc97417ee9e179677d22c7041c8f078ce67"
   end
+
   def install
     virtualenv_install_with_resources
     # Symlink argcomplete's helper for shell completion setup
