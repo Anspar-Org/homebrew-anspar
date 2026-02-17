@@ -6,16 +6,12 @@ class Elspais < Formula
   url "https://files.pythonhosted.org/packages/0e/4b/16bcd77d111768e3da552a4a5478bb5cf4d0035eb2156477c906b176809c/elspais-0.73.0.tar.gz"
   sha256 "ed6f5eb18ec2344231d609718c86c700f6e2b5a6c0383a9ca3490b9897c54232"
   license "AGPL-3.0-only"
-  revision 1
   head "https://github.com/Anspar-Org/elspais.git", branch: "main"
-
-  bottle do
-    root_url "https://github.com/Anspar-Org/homebrew-elspais/releases/download/elspais-0.72.0"
-    sha256 cellar: :any, arm64_sequoia: "00ab22a4f1a76ecbc4f92485115962a90d2c9b3edb249303ebc6ec7cc0c54195"
-  end
 
   depends_on "rust" => :build
   depends_on "python@3.12"
+
+  conflicts_with "elspais-core", because: "both install the `elspais` binary"
 
   resource "annotated-types" do
     url "https://files.pythonhosted.org/packages/ee/67/531ea369ba64dcff5ec9c3402f9f51bf748cec26dde048a2f973a4eea7f5/annotated_types-0.7.0.tar.gz"
