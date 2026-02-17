@@ -2,11 +2,11 @@ class Elspais < Formula
   include Language::Python::Virtualenv
 
   desc "Requirements validation and traceability tools - L-Space connects all libraries"
-  homepage "https://github.com/anspar/elspais"
+  homepage "https://github.com/Anspar-Org/elspais"
   url "https://files.pythonhosted.org/packages/f6/11/20503e7a80fdff6bb2941581bdcbafd386021fa723bf836046048edfd2b0/elspais-0.72.0.tar.gz"
   sha256 "927b66c77cd6d373c94fe79cf97cee3dc309f89205b44e285dd04378fc94ca2d"
   license "AGPL-3.0-only"
-  head "https://github.com/anspar/elspais.git", branch: "main"
+  head "https://github.com/Anspar-Org/elspais.git", branch: "main"
 
   depends_on "python@3.12"
   depends_on "rust" => :build
