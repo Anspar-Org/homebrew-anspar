@@ -57,9 +57,20 @@ jobs:
           VERSION: ${{ steps.params.outputs.version }}
         run: |
           python3 << 'PYEOF'
-          import json, os, re, subprocess, urllib.request
+          import json, os, re, subprocess, time, urllib.request, urllib.error
 
           version = os.environ["VERSION"]
+
+          # --- Wait for PyPI to index the new version ---
+          for attempt in range(12):
+              try:
+                  urllib.request.urlopen(f"https://pypi.org/pypi/elspais/{version}/json")
+                  break
+              except urllib.error.HTTPError:
+                  print(f"Waiting for PyPI to index elspais {version}... (attempt {attempt+1}/12)")
+                  time.sleep(10)
+          else:
+              raise RuntimeError(f"PyPI never indexed elspais {version} after 2 minutes")
 
           # --- Fetch elspais sdist info ---
           with urllib.request.urlopen(f"https://pypi.org/pypi/elspais/{version}/json") as r:
@@ -194,9 +205,20 @@ jobs:
           VERSION: ${{ steps.params.outputs.version }}
         run: |
           python3 << 'PYEOF'
-          import json, os, re, subprocess, urllib.request
+          import json, os, re, subprocess, time, urllib.request, urllib.error
 
           version = os.environ["VERSION"]
+
+          # --- Wait for PyPI to index the new version ---
+          for attempt in range(12):
+              try:
+                  urllib.request.urlopen(f"https://pypi.org/pypi/anspar-wf/{version}/json")
+                  break
+              except urllib.error.HTTPError:
+                  print(f"Waiting for PyPI to index anspar-wf {version}... (attempt {attempt+1}/12)")
+                  time.sleep(10)
+          else:
+              raise RuntimeError(f"PyPI never indexed anspar-wf {version} after 2 minutes")
 
           # --- Fetch anspar-wf sdist info ---
           with urllib.request.urlopen(f"https://pypi.org/pypi/anspar-wf/{version}/json") as r:
