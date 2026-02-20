@@ -197,12 +197,6 @@ class Elspais < Formula
     url "https://files.pythonhosted.org/packages/61/f1/ee81806690a87dab5f5653c1f146c92bc066d7f4cebc603ef88eb9e13957/werkzeug-3.1.6.tar.gz"
     sha256 "210c6bede5a420a913956b4791a7f4d6843a43b6fcee4dfa08a65e93007d0d25"
   end
-  def install
-    virtualenv_install_with_resources
-    # Symlink argcomplete's helper for shell completion setup
-    bin.install_symlink libexec/"bin/register-python-argcomplete"
-  end
-
   def caveats
     <<~EOS
       elspais has been installed with all optional features:
