@@ -41,15 +41,19 @@ jobs:
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             PACKAGE="${{ inputs.package }}"
             VERSION="${{ inputs.version }}"
+            AUTHOR="${{ github.actor }}"
           else
             PACKAGE="${{ github.event.client_payload.package }}"
             VERSION="${{ github.event.client_payload.version }}"
+            AUTHOR="${{ github.event.client_payload.author }}"
           fi
           # Default to elspais for backwards compatibility
           PACKAGE="${PACKAGE:-elspais}"
+          AUTHOR="${AUTHOR:-unknown}"
           echo "package=${PACKAGE}" >> "$GITHUB_OUTPUT"
           echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
-          echo "Updating ${PACKAGE} to v${VERSION}"
+          echo "author=${AUTHOR}" >> "$GITHUB_OUTPUT"
+          echo "Updating ${PACKAGE} to v${VERSION} (author: ${AUTHOR})"
 
       - name: Update elspais formulas
         if: steps.params.outputs.package == 'elspais'
@@ -375,8 +379,11 @@ jobs:
           git checkout -b "${BRANCH}"
           git commit -m "chore: Update ${PACKAGE} to ${VERSION}"
           git push -u origin "${BRANCH}"
+          AUTHOR="${{ steps.params.outputs.author }}"
           gh pr create \
             --title "Update ${PACKAGE} to ${VERSION}" \
-            --body "Automated formula update for ${PACKAGE} v${VERSION}. Bottles will be built automatically." \
+            --body "Automated formula update for ${PACKAGE} v${VERSION}. Bottles will be built automatically.
+
+author: ${AUTHOR}" \
             --base main \
             --head "${BRANCH}"
