@@ -382,8 +382,6 @@ jobs:
           AUTHOR="${{ steps.params.outputs.author }}"
           gh pr create \
             --title "Update ${PACKAGE} to ${VERSION}" \
-            --body "Automated formula update for ${PACKAGE} v${VERSION}. Bottles will be built automatically.
-
-author: ${AUTHOR}" \
+            --body "Automated formula update for ${PACKAGE} v${VERSION}. Bottles will be built automatically. (author: ${AUTHOR})" \
             --base main \
             --head "${BRANCH}"
