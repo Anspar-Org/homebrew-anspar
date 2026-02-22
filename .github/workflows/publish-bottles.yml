@@ -134,6 +134,57 @@ jobs:
     if: always() && needs.publish.result != 'skipped'
 
     steps:
+      - name: Extract author from PR body
+        id: author
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          AUTHOR=$(echo "$PR_BODY" | grep -oP '^author: \K\S+' || echo "")
+          echo "login=${AUTHOR}" >> "$GITHUB_OUTPUT"
+
+      - name: Lookup Slack user for failure DM
+        id: slack_user
+        if: needs.publish.result == 'failure' && steps.author.outputs.login != ''
+        env:
+          SLACK_TOKEN: ${{ secrets.SLACK_APP_OATH_TOKEN }}
+          GH_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+        run: |
+          AUTHOR="${{ steps.author.outputs.login }}"
+
+          EMAIL=$(gh api "users/${AUTHOR}" --jq '.email // empty' 2>/dev/null || echo "")
+
+          if echo "$EMAIL" | grep -q 'noreply'; then
+            EMAIL=""
+          fi
+
+          if [ -n "$EMAIL" ]; then
+            SLACK_RESPONSE=$(curl -s -H "Authorization: Bearer ${SLACK_TOKEN}" \
+              "https://slack.com/api/users.lookupByEmail?email=${EMAIL}")
+
+            if [ "$(echo "$SLACK_RESPONSE" | jq -r '.ok')" = "true" ]; then
+              echo "user_id=$(echo "$SLACK_RESPONSE" | jq -r '.user.id')" >> "$GITHUB_OUTPUT"
+              echo "found=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "found=false" >> "$GITHUB_OUTPUT"
+            fi
+          else
+            echo "found=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Determine Slack channel
+        id: channel
+        env:
+          RESULT: ${{ needs.publish.result }}
+          SLACK_USER_FOUND: ${{ steps.slack_user.outputs.found }}
+          SLACK_USER_ID: ${{ steps.slack_user.outputs.user_id }}
+          FALLBACK_CHANNEL: ${{ secrets.SLACK_FALLBACK_CHANNEL }}
+        run: |
+          if [ "$RESULT" = "failure" ] && [ "$SLACK_USER_FOUND" = "true" ]; then
+            echo "id=${SLACK_USER_ID}" >> "$GITHUB_OUTPUT"
+          else
+            echo "id=${FALLBACK_CHANNEL}" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Build message
         id: message
         env:
@@ -163,5 +214,5 @@ jobs:
           token: ${{ secrets.SLACK_APP_OATH_TOKEN }}
           errors: true
           payload: |
-            channel: "${{ secrets.SLACK_FALLBACK_CHANNEL }}"
+            channel: "${{ steps.channel.outputs.id }}"
             text: "${{ steps.message.outputs.text }}"
