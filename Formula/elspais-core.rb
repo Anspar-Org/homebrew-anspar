@@ -3,13 +3,13 @@ class ElspaisCore < Formula
 
   desc "Requirements validation and traceability tools (core only)"
   homepage "https://github.com/anspar/elspais"
-  url "https://files.pythonhosted.org/packages/41/78/9628a2fecc8e27b24473263722556c0839fcbae64b298e60f3c79cfedf74/elspais-0.104.43.tar.gz"
-  sha256 "ffc77abf1bb322203ae52f71ba5f7cbcd8025affa62f253778bd3b30179016b6"
+  url "https://files.pythonhosted.org/packages/73/b6/70d5490b43690c705e684de9a73334094a80d2d55e352125a3e0a211e930/elspais-0.104.44.tar.gz"
+  sha256 "d7c514d3d20c81fa6bbe0a380ced7328ccb4c80686094b93e3dbd438a419085b"
   license "AGPL-3.0-only"
 
   bottle do
-    root_url "https://github.com/Anspar-Org/homebrew-anspar/releases/download/elspais-0.104.43"
-    sha256 cellar: :any_skip_relocation, arm64_sequoia: "415b590fb7592f385ce889b15ca1a19f5010e9e8ef3d7cab7ea3edccea254111"
+    root_url "https://github.com/Anspar-Org/homebrew-anspar/releases/download/elspais-0.104.44"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "857add387e5606ec865a3ed05088dc71fb1322d132d82234f26f00cbb68facb7"
   end
 
   depends_on "python@3.12"
