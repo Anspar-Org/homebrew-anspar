@@ -182,10 +182,14 @@ jobs:
               resource_block + '\n',
               content,
           )
-          if 'resource "tyro"' not in content and 'tyro' in deps:
+          # Verify all resolved deps made it into the formula
+          formula_resources = set(re.findall(r'resource "(.+?)" do', content))
+          missing = set(deps.keys()) - formula_resources
+          if missing:
               raise RuntimeError(
-                  "Resource replacement failed: tyro not found in updated formula. "
-                  "Check that the formula has resource blocks before 'def install'."
+                  f"Resource replacement failed: {len(missing)} deps missing from formula: "
+                  f"{', '.join(sorted(missing))}. "
+                  f"Check that resource blocks exist before 'def install'."
               )
 
           with open("Formula/elspais.rb", "w") as f:
