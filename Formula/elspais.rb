@@ -26,7 +26,7 @@ class Elspais < Formula
 
   def install
     python3 = "python3.12"
-    venv = virtualenv_create(libexec, python3)
+    virtualenv_create(libexec, python3)
 
     # Install resources with build isolation (pip 26 compat: lets pip
     # fetch build deps like maturin as wheels instead of forcing sdist)
@@ -55,7 +55,6 @@ class Elspais < Formula
         - Shell completion (bash, zsh, fish)
 
       MCP Server Setup
-      ================
       To configure the MCP server for Claude Code or Claude Desktop:
 
         elspais mcp install             # project-local (.mcp.json)
@@ -63,13 +62,11 @@ class Elspais < Formula
         elspais mcp install --desktop   # Claude Desktop config
 
       Shell Completion
-      ================
       To install shell completions for your current shell:
 
         elspais completion --install
 
       Quick Start
-      ===========
       Run `elspais docs quickstart` for a getting-started guide.
     EOS
   end

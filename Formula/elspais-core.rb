@@ -23,7 +23,7 @@ class ElspaisCore < Formula
 
   def install
     python3 = "python3.12"
-    venv = virtualenv_create(libexec, python3)
+    virtualenv_create(libexec, python3)
 
     resources.each do |r|
       r.stage do

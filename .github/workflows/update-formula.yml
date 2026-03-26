@@ -70,17 +70,11 @@ jobs:
           version = os.environ["VERSION"]
 
           def pick_artifact(pkg_urls):
-              """Prefer py3-none-any wheel, fall back to sdist."""
-              wheel = next(
-                  (f for f in pkg_urls
-                   if f["packagetype"] == "bdist_wheel"
-                   and f["filename"].endswith("-py3-none-any.whl")),
-                  None
-              )
+              """Use sdist (Homebrew's virtualenv_install_with_resources requires sdist)."""
               sdist = next(
                   (f for f in pkg_urls if f["packagetype"] == "sdist"), None
               )
-              return wheel or sdist, "wheel" if wheel else "sdist"
+              return sdist, "sdist"
 
           # --- Phase 1: Wait for PyPI JSON API ---
           for attempt in range(12):
