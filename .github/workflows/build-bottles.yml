@@ -43,6 +43,8 @@ jobs:
           # in norm_and_check(), which falsely rejects valid backend_path entries.
           # The upstream pyproject-hooks repo already fixed this (commonpath).
           # Homebrew issue: https://github.com/Homebrew/homebrew-core/issues/274246
+          # Install Python first (brew test-bot --only-setup doesn't install deps)
+          brew install python@3.12
           IMPL=$(python3 -c "
           import glob, sys
           for pat in [
