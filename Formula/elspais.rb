@@ -3,8 +3,8 @@ class Elspais < Formula
 
   desc "Requirements validation and traceability tools - L-Space connects all libraries"
   homepage "https://github.com/Anspar-Org/elspais"
-  url "https://files.pythonhosted.org/packages/a6/8b/885add4ae53695767af767b03e92c78debe148e15c809e827771d9f872e4/elspais-0.115.5.tar.gz"
-  sha256 "2e435efaedf2ffcfdd516e67b3cbb8ffbf15d22719f8ec79e44acc7fb1c1eddc"
+  url "https://files.pythonhosted.org/packages/72/b7/b83466f700708dc4e5ca685cd47705d4ca9b5439a4aca06c0b1c31c169cd/elspais-0.115.9.tar.gz"
+  sha256 "19a2c29ab935a606ed9c17638cf8f55edc0bbe87f0fe240d777bc7bb5f5d8d3d"
   license "AGPL-3.0-only"
   head "https://github.com/Anspar-Org/elspais.git", branch: "main"
 
@@ -67,8 +67,8 @@ class Elspais < Formula
   end
 
   resource "idna" do
-    url "https://files.pythonhosted.org/packages/05/b1/efac073e0c297ecf2fb33c346989a529d4e19164f1759102dee5953ee17e/idna-3.14.tar.gz"
-    sha256 "466d810d7a2cc1022bea9b037c39728d51ae7dad40d480fc9b7d7ecf98ba8ee3"
+    url "https://files.pythonhosted.org/packages/82/77/7b3966d0b9d1d31a36ddf1746926a11dface89a83409bf1483f0237aa758/idna-3.15.tar.gz"
+    sha256 "ca962446ea538f7092a95e057da437618e886f4d349216d2b1e294abfdb65fdc"
   end
 
   resource "jinja2" do
