@@ -204,7 +204,8 @@ jobs:
             echo "user_id=$(echo "$SLACK_RESPONSE" | jq -r '.user.id')" >> "$GITHUB_OUTPUT"
             echo "found=true" >> "$GITHUB_OUTPUT"
           else
-            echo "::warning::Slack user lookup failed for ${EMAIL}: $(echo "$SLACK_RESPONSE" | jq -r '.error // \"unknown\"'); failure DM not sent"
+            ERR=$(echo "$SLACK_RESPONSE" | jq -r '.error // "unknown"')
+            echo "::warning::Slack user lookup failed for ${EMAIL}: ${ERR}; failure DM not sent"
             echo "found=false" >> "$GITHUB_OUTPUT"
           fi
 
