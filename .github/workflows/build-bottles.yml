@@ -88,34 +88,42 @@ jobs:
           echo "package=${PACKAGE:-unknown}" >> "$GITHUB_OUTPUT"
           echo "version=${VERSION:-unknown}" >> "$GITHUB_OUTPUT"
 
-      - name: Lookup Slack user for DM
+      - name: Lookup Slack user (PR author) for DM
         id: slack_user
         env:
           SLACK_TOKEN: ${{ secrets.SLACK_APP_OATH_TOKEN }}
           GH_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+          AUTHOR: ${{ github.event.pull_request.user.login }}
         run: |
-          # Get email from the PR author's GitHub profile
-          AUTHOR="${{ github.event.pull_request.user.login }}"
-          EMAIL=$(gh api "users/${AUTHOR}" --jq '.email // empty')
+          EMAIL=$(gh api "users/${AUTHOR}" --jq '.email // empty' 2>/dev/null || echo "")
 
-          if [ -n "$EMAIL" ] && ! echo "$EMAIL" | grep -q 'noreply'; then
-            SLACK_RESPONSE=$(curl -s -H "Authorization: Bearer ${SLACK_TOKEN}" \
-              "https://slack.com/api/users.lookupByEmail?email=${EMAIL}")
-
-            if [ "$(echo "$SLACK_RESPONSE" | jq -r '.ok')" = "true" ]; then
-              echo "id=$(echo "$SLACK_RESPONSE" | jq -r '.user.id')" >> "$GITHUB_OUTPUT"
-              exit 0
-            fi
+          if [ -z "$EMAIL" ] || echo "$EMAIL" | grep -q 'noreply'; then
+            echo "::warning::No usable email for PR author ${AUTHOR}; failure DM not sent"
+            echo "found=false" >> "$GITHUB_OUTPUT"
+            exit 0
           fi
-          # Fallback to dev channel
-          echo "id=${{ secrets.SLACK_CHANNEL_DEV }}" >> "$GITHUB_OUTPUT"
 
-      - name: Send failure notification
+          SLACK_RESPONSE=$(curl -s -H "Authorization: Bearer ${SLACK_TOKEN}" \
+            "https://slack.com/api/users.lookupByEmail?email=${EMAIL}")
+
+          if [ "$(echo "$SLACK_RESPONSE" | jq -r '.ok')" = "true" ]; then
+            echo "user_id=$(echo "$SLACK_RESPONSE" | jq -r '.user.id')" >> "$GITHUB_OUTPUT"
+            echo "found=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::warning::Slack user lookup failed for ${EMAIL}: $(echo "$SLACK_RESPONSE" | jq -r '.error // \"unknown\"'); failure DM not sent"
+            echo "found=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      # DMs target a user ID, not a channel name — the shared
+      # slack-notify action only routes named channels, so failure DMs
+      # stay on slackapi/slack-github-action.
+      - name: Send failure DM
+        if: steps.slack_user.outputs.found == 'true'
         uses: slackapi/slack-github-action@v2.1.1
         with:
           method: chat.postMessage
           token: ${{ secrets.SLACK_APP_OATH_TOKEN }}
           errors: true
           payload: |
-            channel: "${{ steps.slack_user.outputs.id }}"
+            channel: "${{ steps.slack_user.outputs.user_id }}"
             text: ":rotating_light: *Homebrew bottle build failed* for ${{ steps.pr-info.outputs.package }} v${{ steps.pr-info.outputs.version }}\n\n*PR:* <${{ github.event.pull_request.html_url }}|#${{ github.event.pull_request.number }} ${{ github.event.pull_request.title }}>\n*Run:* <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View failed run>"

@@ -127,43 +127,19 @@ jobs:
           echo "::error::Failed to merge PR #${PR_NUMBER} after 5 attempts"
           exit 1
 
-  notify:
-    name: Slack Notification
+  notify-success:
+    name: Slack Notification (success)
     runs-on: ubuntu-latest
     needs: [publish]
-    if: always() && needs.publish.result != 'skipped'
+    if: always() && needs.publish.result == 'success'
 
     steps:
-      - name: Determine Slack channel
-        id: channel
-        env:
-          SLACK_TOKEN: ${{ secrets.SLACK_APP_OATH_TOKEN }}
-          GH_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
-        run: |
-          if [ "${{ needs.publish.result }}" = "failure" ]; then
-            # DM on failure — look up PR author's email from GitHub
-            AUTHOR="${{ github.event.pull_request.user.login }}"
-            EMAIL=$(gh api "users/${AUTHOR}" --jq '.email // empty')
+      # Required for slack-notify (reads .github/slack-channels.yml).
+      - uses: actions/checkout@v4
 
-            if [ -n "$EMAIL" ] && ! echo "$EMAIL" | grep -q 'noreply'; then
-              SLACK_RESPONSE=$(curl -s -H "Authorization: Bearer ${SLACK_TOKEN}" \
-                "https://slack.com/api/users.lookupByEmail?email=${EMAIL}")
-              if [ "$(echo "$SLACK_RESPONSE" | jq -r '.ok')" = "true" ]; then
-                echo "id=$(echo "$SLACK_RESPONSE" | jq -r '.user.id')" >> "$GITHUB_OUTPUT"
-                exit 0
-              fi
-            fi
-            # Fallback to dev channel
-            echo "id=${{ secrets.SLACK_CHANNEL_DEV }}" >> "$GITHUB_OUTPUT"
-          else
-            # Success goes to dev channel
-            echo "id=${{ secrets.SLACK_CHANNEL_DEV }}" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Build message
+      - name: Build success message
         id: message
         env:
-          RESULT: ${{ needs.publish.result }}
           PACKAGE: ${{ needs.publish.outputs.package }}
           VERSION: ${{ needs.publish.outputs.version }}
           SERVER_URL: ${{ github.server_url }}
@@ -174,20 +150,74 @@ jobs:
           PKG="${PACKAGE:-unknown}"
           VER="${VERSION:-unknown}"
 
-          if [ "$RESULT" = "success" ]; then
-            MSG=":white_check_mark: *${PKG} v${VER} is now available on Homebrew*\n\n\`brew upgrade ${PKG}\` or \`brew install ${PKG}\`\n*Run:* <${RUN_URL}|View run>"
-          else
-            MSG=":rotating_light: *Homebrew publish failed* for ${PKG} v${VER}\n\n*Run:* <${RUN_URL}|View failed run>"
-          fi
+          MSG=$(printf '%s\n\n%s\n%s' \
+            ":white_check_mark: *${PKG} v${VER} is now available on Homebrew*" \
+            "\`brew upgrade ${PKG}\` or \`brew install ${PKG}\`" \
+            "*Run:* <${RUN_URL}|View run>")
 
-          echo "text=${MSG}" >> "$GITHUB_OUTPUT"
+          {
+            echo "text<<EOF"
+            echo "$MSG"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+          # Per-package bookmark slot ("<pkg> latest Homebrew release")
+          # so each package keeps its own bookmark in the channel.
+          echo "bookmark-title=${PKG} latest Homebrew release" >> "$GITHUB_OUTPUT"
 
       - name: Send Slack notification
+        # Bot scopes required: chat:write, channels:read, channels:join,
+        # bookmarks:read, bookmarks:write.
+        uses: Cure-HHT/hht_workflows/.github/actions/slack-notify@bfe3d57b66429f300d11496b541c91d2934ceada
+        with:
+          event: bottle-publish-success
+          text: ${{ steps.message.outputs.text }}
+          bookmark-title: ${{ steps.message.outputs.bookmark-title }}
+          slack-token: ${{ secrets.SLACK_APP_OATH_TOKEN }}
+
+  notify-failure:
+    name: Slack Notification (failure)
+    runs-on: ubuntu-latest
+    needs: [publish]
+    if: always() && needs.publish.result == 'failure'
+
+    steps:
+      - name: Lookup Slack user (PR author) for DM
+        id: slack_user
+        env:
+          SLACK_TOKEN: ${{ secrets.SLACK_APP_OATH_TOKEN }}
+          GH_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+          AUTHOR: ${{ github.event.pull_request.user.login }}
+        run: |
+          EMAIL=$(gh api "users/${AUTHOR}" --jq '.email // empty' 2>/dev/null || echo "")
+
+          if [ -z "$EMAIL" ] || echo "$EMAIL" | grep -q 'noreply'; then
+            echo "::warning::No usable email for PR author ${AUTHOR}; failure DM not sent"
+            echo "found=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          SLACK_RESPONSE=$(curl -s -H "Authorization: Bearer ${SLACK_TOKEN}" \
+            "https://slack.com/api/users.lookupByEmail?email=${EMAIL}")
+
+          if [ "$(echo "$SLACK_RESPONSE" | jq -r '.ok')" = "true" ]; then
+            echo "user_id=$(echo "$SLACK_RESPONSE" | jq -r '.user.id')" >> "$GITHUB_OUTPUT"
+            echo "found=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::warning::Slack user lookup failed for ${EMAIL}: $(echo "$SLACK_RESPONSE" | jq -r '.error // \"unknown\"'); failure DM not sent"
+            echo "found=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      # DMs target a user ID, not a channel name — the shared
+      # slack-notify action only routes named channels, so failure DMs
+      # stay on slackapi/slack-github-action.
+      - name: Send failure DM
+        if: steps.slack_user.outputs.found == 'true'
         uses: slackapi/slack-github-action@v2.1.1
         with:
           method: chat.postMessage
           token: ${{ secrets.SLACK_APP_OATH_TOKEN }}
           errors: true
           payload: |
-            channel: "${{ steps.channel.outputs.id }}"
-            text: "${{ steps.message.outputs.text }}"
+            channel: "${{ steps.slack_user.outputs.user_id }}"
+            text: ":rotating_light: *Homebrew publish failed* for ${{ needs.publish.outputs.package }} v${{ needs.publish.outputs.version }}\n\n*PR:* <${{ github.event.pull_request.html_url }}|#${{ github.event.pull_request.number }} ${{ github.event.pull_request.title }}>\n*Run:* <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View failed run>"
