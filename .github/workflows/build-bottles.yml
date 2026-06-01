@@ -14,6 +14,14 @@ jobs:
       matrix:
         os: [macos-latest]
     runs-on: ${{ matrix.os }}
+    env:
+      # Homebrew added a tap-trust gate (HOMEBREW_REQUIRE_TAP_TRUST) that makes
+      # `brew doctor` — run as a hard step inside `brew test-bot --only-setup` —
+      # exit non-zero when our own third-party tap (anspar-org/anspar) is not
+      # "trusted", failing the bottle build on every formula bump. We trust our
+      # own tap, so keep allowing it by default. Job-level so it also covers the
+      # `--only-formulae` build step.
+      HOMEBREW_NO_REQUIRE_TAP_TRUST: 1
     steps:
       - name: Set up Homebrew
         id: set-up-homebrew
