@@ -3,8 +3,8 @@ class Elspais < Formula
 
   desc "Requirements validation and traceability tools - L-Space connects all libraries"
   homepage "https://github.com/Anspar-Org/elspais"
-  url "https://files.pythonhosted.org/packages/3a/17/90173f922e343fdce81b5064b8efda2dc273843b97145d26d99057361675/elspais-0.117.41.tar.gz"
-  sha256 "365451678a6344e0a0a14e13a83207701fd1549a88183d9b498b3290d43523eb"
+  url "https://files.pythonhosted.org/packages/c6/fb/e656b3fbbd2b996e560a6f14ba2da74187173d586b1a3fd7b6f4f53880e1/elspais-0.117.44.tar.gz"
+  sha256 "b24f1c835bd5896c8d32f70c71430dd4a3ab85b2cca21b7ec60f0c48e20b72c4"
   license "AGPL-3.0-only"
   head "https://github.com/Anspar-Org/elspais.git", branch: "main"
 
@@ -112,8 +112,8 @@ class Elspais < Formula
   end
 
   resource "pydantic-settings" do
-    url "https://files.pythonhosted.org/packages/07/60/1d1e59c9c90d54591469ada7d268251f71c24bdb765f1a8a832cee8c6653/pydantic_settings-2.14.1.tar.gz"
-    sha256 "e874d3bec7e787b0c9958277956ed9b4dd5de6a80e162188fdaff7c5e26fd5fa"
+    url "https://files.pythonhosted.org/packages/5c/b5/8f48e906c3e0205276e8bd8cb7512217a87b2685304d64be27cad5b3019f/pydantic_settings-2.14.2.tar.gz"
+    sha256 "c19dd64b19097f1de80184f0cc7b0272a13ae6e170cbf240a3e27e381ed14a5f"
   end
 
   resource "pygments" do
