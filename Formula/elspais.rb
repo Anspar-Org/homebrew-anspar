@@ -3,14 +3,14 @@ class Elspais < Formula
 
   desc "Requirements validation and traceability tools - L-Space connects all libraries"
   homepage "https://github.com/Anspar-Org/elspais"
-  url "https://files.pythonhosted.org/packages/c6/fb/e656b3fbbd2b996e560a6f14ba2da74187173d586b1a3fd7b6f4f53880e1/elspais-0.117.44.tar.gz"
-  sha256 "b24f1c835bd5896c8d32f70c71430dd4a3ab85b2cca21b7ec60f0c48e20b72c4"
+  url "https://files.pythonhosted.org/packages/99/da/013d3864644c0fa881907b36a9e1fc5ecf82c0ce276837da9a923d690522/elspais-0.117.81.tar.gz"
+  sha256 "a8d44216b210282fde2cc148f232cc0e8d8b73ac2ec94c38a7b45c67d64f0313"
   license "AGPL-3.0-only"
   head "https://github.com/Anspar-Org/elspais.git", branch: "main"
 
   bottle do
-    root_url "https://github.com/Anspar-Org/homebrew-anspar/releases/download/elspais-0.117.44"
-    sha256 cellar: :any, arm64_sequoia: "27397a1a6764b8e601bc8c082cc7120e95b0460ca4430800d3d50d9f1d55f514"
+    root_url "https://github.com/Anspar-Org/homebrew-anspar/releases/download/elspais-0.117.81"
+    sha256 cellar: :any, arm64_sequoia: "815968a713a5b686c1e9a853b408095a8d57f80525a3c7f87dc54bb171efceac"
   end
 
   depends_on "rust" => :build
@@ -147,8 +147,8 @@ class Elspais < Formula
   end
 
   resource "sse-starlette" do
-    url "https://files.pythonhosted.org/packages/f7/2b/58abc2d1fd397e7dde08e947e05c884d8ef2f78d5e2588c17a12d42d6994/sse_starlette-3.4.4.tar.gz"
-    sha256 "07e0fa0460138baf25cdd5fb28683472c3995dc1642225191b3832d62526bcb0"
+    url "https://files.pythonhosted.org/packages/d2/1b/bc9e3e7a72dcdad7dc7888758f5d00f56f8909ed5cfdff822bd72bb4c520/sse_starlette-3.4.5.tar.gz"
+    sha256 "83072538bc211a2f68b7b0422226c4af3e9b62e106e07034664b832ca019842a"
   end
 
   resource "starlette" do
@@ -177,8 +177,8 @@ class Elspais < Formula
   end
 
   resource "tyro" do
-    url "https://files.pythonhosted.org/packages/6a/c4/483dc7d4b930a177edcfd1dafa9811ee3461574050f01e6304bd04593bc2/tyro-1.0.14.tar.gz"
-    sha256 "5fff7599ef9cde57a9c8384c0fdc6f62f7a75fa4dfe73d2bc11ba080f412e57a"
+    url "https://files.pythonhosted.org/packages/12/78/a5749a6c1ee9abc2999e294f339f8f72476d1a60bb95fc0e86156aafed3b/tyro-1.0.15.tar.gz"
+    sha256 "3f1d60887723eecb9c489f195d11f079c4a1f33df74b723552ad31ec57c667bb"
   end
 
   resource "uvicorn" do
