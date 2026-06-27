@@ -3,8 +3,8 @@ class Elspais < Formula
 
   desc "Requirements validation and traceability tools - L-Space connects all libraries"
   homepage "https://github.com/Anspar-Org/elspais"
-  url "https://files.pythonhosted.org/packages/99/da/013d3864644c0fa881907b36a9e1fc5ecf82c0ce276837da9a923d690522/elspais-0.117.81.tar.gz"
-  sha256 "a8d44216b210282fde2cc148f232cc0e8d8b73ac2ec94c38a7b45c67d64f0313"
+  url "https://files.pythonhosted.org/packages/90/1a/cf7607feda1b722589d2d5165a008fa761a10cb4b92d1989785f028a2c5b/elspais-0.118.16.tar.gz"
+  sha256 "a11a5b29f192e54af7d534de9b763a4f008c1ff94a6d0e3b993cb69de8b5b6fb"
   license "AGPL-3.0-only"
   head "https://github.com/Anspar-Org/elspais.git", branch: "main"
 
@@ -22,8 +22,8 @@ class Elspais < Formula
   end
 
   resource "anyio" do
-    url "https://files.pythonhosted.org/packages/1c/b5/001890774a9552aff22502b8da382593109ce0c95314abaebbb116567545/anyio-4.14.0.tar.gz"
-    sha256 "b47c1f9ccf73e67021df785332508f99379c68fa7d0684e8e3492cb1d4b23f89"
+    url "https://files.pythonhosted.org/packages/3b/72/5562aabb8dd7181e8e860622a38bea08d17842b99ecd4c91f84ac95251b0/anyio-4.14.1.tar.gz"
+    sha256 "8d648a3544c1a700e3ff78615cd679e4c5c3f149904287e73687b2596963629e"
   end
 
   resource "attrs" do
@@ -37,8 +37,8 @@ class Elspais < Formula
   end
 
   resource "click" do
-    url "https://files.pythonhosted.org/packages/9b/98/518d8e5081007684232226f475082b30087d0f585e8457db087298259f49/click-8.4.1.tar.gz"
-    sha256 "918b5633eddf6b41c32d4f454bf0de810065c74e3f7dbf8ee5452f8be88d3e96"
+    url "https://files.pythonhosted.org/packages/76/d4/81420972a676e8ffea40450d8c8c92943e7218a78fe9b64359836cc9876b/click-8.4.2.tar.gz"
+    sha256 "9a6cea6e60b17ebe0a44c5cc636d94f09bd66142c1cd7d8b4cd731c4917a15f6"
   end
 
   resource "docstring-parser" do
@@ -97,8 +97,8 @@ class Elspais < Formula
   end
 
   resource "mcp" do
-    url "https://files.pythonhosted.org/packages/c1/ee/94c6c50ffc5b5cf4737052275d11b57367f32d1a8516e31dcd60591b3916/mcp-1.28.0.tar.gz"
-    sha256 "559d3f9943674cafbe5744c5d3794f3237e8b47f9bbc58e20c0fad680d8487c2"
+    url "https://files.pythonhosted.org/packages/6e/77/9450b8f251a13affb6281997d0523c4615f8a8b35d0b21ff30db3a5aac9d/mcp-1.28.1.tar.gz"
+    sha256 "d51e36a5f5644faea4f85ea649bfffa6bc6c26770d42798ad6a3de3d2ba69683"
   end
 
   resource "pydantic" do
