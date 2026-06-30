@@ -3,14 +3,14 @@ class Elspais < Formula
 
   desc "Requirements validation and traceability tools - L-Space connects all libraries"
   homepage "https://github.com/Anspar-Org/elspais"
-  url "https://files.pythonhosted.org/packages/90/1a/cf7607feda1b722589d2d5165a008fa761a10cb4b92d1989785f028a2c5b/elspais-0.118.16.tar.gz"
-  sha256 "a11a5b29f192e54af7d534de9b763a4f008c1ff94a6d0e3b993cb69de8b5b6fb"
+  url "https://files.pythonhosted.org/packages/4b/bb/110e9c553712b6e192787de7cb08c7563a2641c7bb56205bab99f5c171fb/elspais-0.118.31.tar.gz"
+  sha256 "3c8914b5bbbf967ddcf939b2f81e4fba5e60846c411336c9db84eee2b819df86"
   license "AGPL-3.0-only"
   head "https://github.com/Anspar-Org/elspais.git", branch: "main"
 
   bottle do
-    root_url "https://github.com/Anspar-Org/homebrew-anspar/releases/download/elspais-0.118.16"
-    sha256 cellar: :any, arm64_tahoe: "1a6d1b0e525462a9ad378aa3b28e4e6da8c39de28dc87bddcabf0f097da5bbe3"
+    root_url "https://github.com/Anspar-Org/homebrew-anspar/releases/download/elspais-0.118.31"
+    sha256 cellar: :any, arm64_tahoe: "d34d92f48090533c93a9d6e48d4b45ef09ae678e922d8a3908187bdf3063d42d"
   end
 
   depends_on "rust" => :build
@@ -142,8 +142,8 @@ class Elspais < Formula
   end
 
   resource "rpds-py" do
-    url "https://files.pythonhosted.org/packages/2e/43/25a8dcd3feedd735039a8f0b5b7e3b118232b5eae288c4fd9ab200d41094/rpds_py-2026.5.1.tar.gz"
-    sha256 "07b24fea40541e28570e5b795a4a38fbdcd12550c06bd0748005ecc8116ca256"
+    url "https://files.pythonhosted.org/packages/aa/2a/9618a122aeb2a169a28b03889a2995fe297588964333d4a7d67bdf46e147/rpds_py-2026.6.3.tar.gz"
+    sha256 "1cebd1337c242e4ec2293e541f712b2da849b29f48f0c293684b71c0632625d4"
   end
 
   resource "sse-starlette" do
