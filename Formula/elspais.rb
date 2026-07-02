@@ -3,14 +3,14 @@ class Elspais < Formula
 
   desc "Requirements validation and traceability tools - L-Space connects all libraries"
   homepage "https://github.com/Anspar-Org/elspais"
-  url "https://files.pythonhosted.org/packages/4b/bb/110e9c553712b6e192787de7cb08c7563a2641c7bb56205bab99f5c171fb/elspais-0.118.31.tar.gz"
-  sha256 "3c8914b5bbbf967ddcf939b2f81e4fba5e60846c411336c9db84eee2b819df86"
+  url "https://files.pythonhosted.org/packages/1a/d2/b01f2e21101ea130d9fb2573c9ced09d8b19980d73f874fa769ef087b8c2/elspais-0.118.42.tar.gz"
+  sha256 "a5b7dd107b81a5ab5aa32848dff33f2c7147d7054e859435e1076eb9064eb2d4"
   license "AGPL-3.0-only"
   head "https://github.com/Anspar-Org/elspais.git", branch: "main"
 
   bottle do
-    root_url "https://github.com/Anspar-Org/homebrew-anspar/releases/download/elspais-0.118.31"
-    sha256 cellar: :any, arm64_tahoe: "d34d92f48090533c93a9d6e48d4b45ef09ae678e922d8a3908187bdf3063d42d"
+    root_url "https://github.com/Anspar-Org/homebrew-anspar/releases/download/elspais-0.118.42"
+    sha256 cellar: :any, arm64_tahoe: "c0bfe71247f58572e1c17dd2af633a59f9dc574074a348b5bd263b22de08aee5"
   end
 
   depends_on "rust" => :build
@@ -167,8 +167,8 @@ class Elspais < Formula
   end
 
   resource "typing-extensions" do
-    url "https://files.pythonhosted.org/packages/72/94/1a15dd82efb362ac84269196e94cf00f187f7ed21c242792a923cdb1c61f/typing_extensions-4.15.0.tar.gz"
-    sha256 "0cea48d173cc12fa28ecabc3b837ea3cf6f38c6d1136f85cbaaf598984861466"
+    url "https://files.pythonhosted.org/packages/f6/cc/6253133b5bb138fc3306cebfbda2c520f545d36b5be2c7255cc528bb45d6/typing_extensions-4.16.0.tar.gz"
+    sha256 "dc983d19a509c94dba722ee6abd33940f7c05a89e243c47e907eb4db6f1a43e5"
   end
 
   resource "typing-inspection" do
