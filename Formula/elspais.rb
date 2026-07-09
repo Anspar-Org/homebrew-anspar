@@ -3,8 +3,8 @@ class Elspais < Formula
 
   desc "Requirements validation and traceability tools - L-Space connects all libraries"
   homepage "https://github.com/Anspar-Org/elspais"
-  url "https://files.pythonhosted.org/packages/1a/d2/b01f2e21101ea130d9fb2573c9ced09d8b19980d73f874fa769ef087b8c2/elspais-0.118.42.tar.gz"
-  sha256 "a5b7dd107b81a5ab5aa32848dff33f2c7147d7054e859435e1076eb9064eb2d4"
+  url "https://files.pythonhosted.org/packages/11/65/ded616ccdb9f0ed6284eee16f9ec010396c17412754509c0d32e746486c0/elspais-0.119.90.tar.gz"
+  sha256 "b6c21dcc2d18ac797ff2c9dc48b9bab81826ef11574702769d5608e182c59b77"
   license "AGPL-3.0-only"
   head "https://github.com/Anspar-Org/elspais.git", branch: "main"
 
@@ -39,6 +39,11 @@ class Elspais < Formula
   resource "click" do
     url "https://files.pythonhosted.org/packages/76/d4/81420972a676e8ffea40450d8c8c92943e7218a78fe9b64359836cc9876b/click-8.4.2.tar.gz"
     sha256 "9a6cea6e60b17ebe0a44c5cc636d94f09bd66142c1cd7d8b4cd731c4917a15f6"
+  end
+
+  resource "coverage" do
+    url "https://files.pythonhosted.org/packages/cc/8b/adeb62ea8951f13c4c7fef2e7a85e1a06b499c8d8237ea589d496029e53f/coverage-7.15.0.tar.gz"
+    sha256 "9ac3fe7a1435986463eaa8ee253ae2f2a268709ba4ae5c7dd1f52a05391ad78f"
   end
 
   resource "docstring-parser" do
@@ -182,8 +187,8 @@ class Elspais < Formula
   end
 
   resource "uvicorn" do
-    url "https://files.pythonhosted.org/packages/c4/1f/fa18009dea8469069cca78a4e877a008ab78f08b064bfc9ab891579077ff/uvicorn-0.49.0.tar.gz"
-    sha256 "ebf4271aa580d9de97f93192d4595176df6e91f9aae919ca73e4fc07df1e66a3"
+    url "https://files.pythonhosted.org/packages/a2/65/b7c6c443ccc58678c91e1e973bbe2a878591538655d6e1d47f24ba1c51f3/uvicorn-0.51.0.tar.gz"
+    sha256 "f6f4b69b657c312f516dd2d268ab9ae6f254b11e4bac504f37b2ab58b24dd0b0"
   end
 
   def install
