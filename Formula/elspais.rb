@@ -3,14 +3,14 @@ class Elspais < Formula
 
   desc "Requirements validation and traceability tools - L-Space connects all libraries"
   homepage "https://github.com/Anspar-Org/elspais"
-  url "https://files.pythonhosted.org/packages/23/37/6f31b7ce28d4b5db8e920d1e97486e9a4481afdcfb236c0c89e120d5093f/elspais-0.121.0.tar.gz"
-  sha256 "d5d5f31ff0d09aed4c4e06d1e3e6f353d198772eee3324b773fbd39cc7ee94de"
+  url "https://files.pythonhosted.org/packages/44/73/fe60c00f539ff6effe16d2e4edef803b16b4e3726cf7033e0e42e0722a90/elspais-0.121.4.tar.gz"
+  sha256 "8b62c1ef3bfb91f7c324110c1982cb8ba156364e82aaeba4514f3b42897cc2dc"
   license "AGPL-3.0-only"
   head "https://github.com/Anspar-Org/elspais.git", branch: "main"
 
   bottle do
-    root_url "https://github.com/Anspar-Org/homebrew-anspar/releases/download/elspais-0.121.0"
-    sha256 cellar: :any, arm64_tahoe: "0e60a381b9e1c7607690ace8194209b18e6a046fb5dc3c4c7af55ed3084b9437"
+    root_url "https://github.com/Anspar-Org/homebrew-anspar/releases/download/elspais-0.121.4"
+    sha256 cellar: :any, arm64_tahoe: "ae60accb3a0db97c12ea9599f8998edde5cf0ee6fcc26454e29595db0c5d2662"
   end
 
   depends_on "rust" => :build
@@ -22,8 +22,8 @@ class Elspais < Formula
   end
 
   resource "anyio" do
-    url "https://files.pythonhosted.org/packages/3b/72/5562aabb8dd7181e8e860622a38bea08d17842b99ecd4c91f84ac95251b0/anyio-4.14.1.tar.gz"
-    sha256 "8d648a3544c1a700e3ff78615cd679e4c5c3f149904287e73687b2596963629e"
+    url "https://files.pythonhosted.org/packages/61/cc/a381afa6efea9f496eff839d4a6a1aed3bfafc7b3ab4b0d1b243a12573dd/anyio-4.14.2.tar.gz"
+    sha256 "cfa139f3ed1a23ee8f88a145ddb5ac7605b8bbfd8592baacd7ce3d8bb4313c7f"
   end
 
   resource "attrs" do
@@ -42,8 +42,8 @@ class Elspais < Formula
   end
 
   resource "coverage" do
-    url "https://files.pythonhosted.org/packages/cc/8b/adeb62ea8951f13c4c7fef2e7a85e1a06b499c8d8237ea589d496029e53f/coverage-7.15.0.tar.gz"
-    sha256 "9ac3fe7a1435986463eaa8ee253ae2f2a268709ba4ae5c7dd1f52a05391ad78f"
+    url "https://files.pythonhosted.org/packages/76/d0/55fe630f4cf94e3fcba868240fad8c8cdd1f764e2a932f8926347e6ec4cd/coverage-7.15.2.tar.gz"
+    sha256 "3df60dc267f0a2ca23cb7a9ab1109c62b9335ffbf519fcfe167157c28c09b81d"
   end
 
   resource "docstring-parser" do
