@@ -3,14 +3,14 @@ class Elspais < Formula
 
   desc "Requirements validation and traceability tools - L-Space connects all libraries"
   homepage "https://github.com/Anspar-Org/elspais"
-  url "https://files.pythonhosted.org/packages/03/dc/b9049c1ab505eca01793b4c5e395d4dbfd22a4e75dde941dff3e30904977/elspais-0.121.44.tar.gz"
-  sha256 "0953f005ff6b24fd507a7fa3bbce24bc047354fbbcdcd10dda7364eda09d0abf"
+  url "https://files.pythonhosted.org/packages/cf/a3/0878a0123adf4c91e789caee8586c8ea43daab45452fb471dab420970039/elspais-0.121.51.tar.gz"
+  sha256 "4a07e7b557cfb4691ca49111733b50b3513f3e68bf3e5a59f643dbb984d26080"
   license "AGPL-3.0-only"
   head "https://github.com/Anspar-Org/elspais.git", branch: "main"
 
   bottle do
-    root_url "https://github.com/Anspar-Org/homebrew-anspar/releases/download/elspais-0.121.44"
-    sha256 cellar: :any, arm64_tahoe: "4d6e1a8f37a4e1fb59d069bc5beb7366e9638a678b3c068b9ce3b07b18372a5a"
+    root_url "https://github.com/Anspar-Org/homebrew-anspar/releases/download/elspais-0.121.51"
+    sha256 cellar: :any, arm64_tahoe: "853b5b3e305e6d36d4781f9e9d2523e0b1a38269aac2bb195100ee1267197eab"
   end
 
   depends_on "rust" => :build
@@ -117,8 +117,8 @@ class Elspais < Formula
   end
 
   resource "pydantic-settings" do
-    url "https://files.pythonhosted.org/packages/5c/b5/8f48e906c3e0205276e8bd8cb7512217a87b2685304d64be27cad5b3019f/pydantic_settings-2.14.2.tar.gz"
-    sha256 "c19dd64b19097f1de80184f0cc7b0272a13ae6e170cbf240a3e27e381ed14a5f"
+    url "https://files.pythonhosted.org/packages/68/ca/31c57507b13119d7d3cfa1576dad2911a4861e3be07b579395f4e9d393f9/pydantic_settings-2.15.0.tar.gz"
+    sha256 "694b793e84f766ba76a90ebdefc01d0a9a045dab0382bee70393da93712ad117"
   end
 
   resource "pygments" do
@@ -157,8 +157,8 @@ class Elspais < Formula
   end
 
   resource "starlette" do
-    url "https://files.pythonhosted.org/packages/0f/3c/76d2fd1f1357ed0f0108d8a5aa233dcf16e2946a8559c84912fe08e01ac7/starlette-1.4.1.tar.gz"
-    sha256 "b7332de6e9375593a29ba9eee1e6ecfeb3eb2043e2e19a13b4b71da73ff35540"
+    url "https://files.pythonhosted.org/packages/b5/b4/205b0d5241d934e8add0c38aa924c4f9fb7330834ff11e5444db964ec3f9/starlette-1.6.0.tar.gz"
+    sha256 "d4e3ac5e546444960c710297a3c9fc3f7ebae1b7e963f3d36173b49da535be9b"
   end
 
   resource "tomlkit" do
