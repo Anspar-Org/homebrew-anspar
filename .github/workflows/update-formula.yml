@@ -25,10 +25,10 @@ jobs:
       pull-requests: write
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: '3.12'
 
@@ -54,10 +54,6 @@ jobs:
           echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
           echo "author=${AUTHOR}" >> "$GITHUB_OUTPUT"
           echo "Updating ${PACKAGE} to v${VERSION} (author: ${AUTHOR})"
-
-      - name: Install pip-tools
-        if: steps.params.outputs.package == 'elspais'
-        run: pip install pip-tools
 
       - name: Update elspais formulas
         if: steps.params.outputs.package == 'elspais'
@@ -327,10 +323,15 @@ jobs:
             --jq ".[] | select(.title | startswith(\"Update ${PACKAGE} to\")) | .number" \
             | while read pr_num; do
                 echo "Closing stale PR #${pr_num}"
-                gh pr close "${pr_num}" --repo "${{ github.repository }}" --delete-branch 2>/dev/null || true
+                if ! gh pr close "${pr_num}" --repo "${{ github.repository }}" --delete-branch; then
+                  echo "::warning::Could not close stale PR #${pr_num}; it stays open"
+                fi
               done
-          # Clean up stale remote branch from previous failed runs
-          git push origin --delete "${BRANCH}" 2>/dev/null || true
+          # A branch from a previous failed run may or may not exist; only its
+          # absence is tolerated, so report anything else.
+          if git ls-remote --exit-code --heads origin "${BRANCH}" >/dev/null; then
+            git push origin --delete "${BRANCH}"
+          fi
           git checkout -b "${BRANCH}"
           git commit -m "chore: Update ${PACKAGE} to ${VERSION}"
           git push -u origin "${BRANCH}"
