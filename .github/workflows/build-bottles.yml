@@ -14,21 +14,13 @@ jobs:
       matrix:
         os: [macos-latest]
     runs-on: ${{ matrix.os }}
-    env:
-      # Homebrew added a tap-trust gate (HOMEBREW_REQUIRE_TAP_TRUST) that makes
-      # `brew doctor` — run as a hard step inside `brew test-bot --only-setup` —
-      # exit non-zero when our own third-party tap (anspar-org/anspar) is not
-      # "trusted", failing the bottle build on every formula bump. We trust our
-      # own tap, so keep allowing it by default. Job-level so it also covers the
-      # `--only-formulae` build step.
-      HOMEBREW_NO_REQUIRE_TAP_TRUST: 1
     steps:
       - name: Set up Homebrew
         id: set-up-homebrew
         uses: Homebrew/actions/setup-homebrew@master
 
       - name: Cache Homebrew Bundler RubyGems
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ${{ steps.set-up-homebrew.outputs.gems-path }}
           key: ${{ matrix.os }}-rubygems-${{ steps.set-up-homebrew.outputs.gems-hash }}
@@ -64,7 +56,7 @@ jobs:
 
       - name: Upload bottles as artifact
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: bottles-${{ matrix.os }}
           path: '*.bottle.*'
@@ -87,26 +79,71 @@ jobs:
     if: always() && needs.build-bottle.result == 'failure'
     runs-on: ubuntu-latest
     steps:
-      - name: Extract package and version from PR title
+      # Required for slack-notify (reads .github/slack-channels.yml).
+      - uses: actions/checkout@v5
+
+      - name: Resolve package, version and release author
         id: pr-info
+        env:
+          TITLE: ${{ github.event.pull_request.title }}
+          BODY: ${{ github.event.pull_request.body }}
+          PR_OPENER: ${{ github.event.pull_request.user.login }}
         run: |
-          TITLE="${{ github.event.pull_request.title }}"
-          PACKAGE=$(echo "$TITLE" | sed -n 's/^Update \(.*\) to .*/\1/p')
-          VERSION=$(echo "$TITLE" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
+          PACKAGE=$(printf '%s' "$TITLE" | sed -n 's/^Update \(.*\) to .*/\1/p')
+          VERSION=$(printf '%s' "$TITLE" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
+          # The release that dispatched this update records who cut it in the
+          # PR body. The PR itself is always opened by the tap token's owner,
+          # who is not necessarily that person, so only fall back to them.
+          AUTHOR=$(printf '%s' "$BODY" | sed -n 's/.*(author: \([^)]*\)).*/\1/p' | head -1)
+          if [ -z "$AUTHOR" ] || [ "$AUTHOR" = "unknown" ]; then
+            AUTHOR="$PR_OPENER"
+          fi
           echo "package=${PACKAGE:-unknown}" >> "$GITHUB_OUTPUT"
           echo "version=${VERSION:-unknown}" >> "$GITHUB_OUTPUT"
+          echo "author=${AUTHOR}" >> "$GITHUB_OUTPUT"
 
-      - name: Lookup Slack user (PR author) for DM
+      - name: Build failure message
+        id: message
+        env:
+          PACKAGE: ${{ steps.pr-info.outputs.package }}
+          VERSION: ${{ steps.pr-info.outputs.version }}
+          AUTHOR: ${{ steps.pr-info.outputs.author }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          MSG=$(printf '%s\n\n%s\n%s\n%s' \
+            ":rotating_light: *Homebrew bottle build failed* for ${PACKAGE} v${VERSION}" \
+            "The release is on PyPI but the tap is still on the previous version." \
+            "*PR:* <${PR_URL}|#${PR_NUMBER}> (released by ${AUTHOR})" \
+            "*Run:* <${RUN_URL}|View failed run>")
+          {
+            echo "text<<EOF"
+            echo "$MSG"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      # The DM below depends on the author having a public email and a
+      # matching Slack account; the channel post does not, so a tap failure
+      # stays visible even when the lookup comes up empty.
+      - name: Post failure to channel
+        uses: Cure-HHT/hht_workflows/.github/actions/slack-notify@bfe3d57b66429f300d11496b541c91d2934ceada
+        with:
+          event: bottle-build-failure
+          text: ${{ steps.message.outputs.text }}
+          slack-token: ${{ secrets.SLACK_APP_OATH_TOKEN }}
+
+      - name: Lookup Slack user (release author) for DM
         id: slack_user
         env:
           SLACK_TOKEN: ${{ secrets.SLACK_APP_OATH_TOKEN }}
           GH_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
-          AUTHOR: ${{ github.event.pull_request.user.login }}
+          AUTHOR: ${{ steps.pr-info.outputs.author }}
         run: |
-          EMAIL=$(gh api "users/${AUTHOR}" --jq '.email // empty' 2>/dev/null || echo "")
+          EMAIL=$(gh api "users/${AUTHOR}" --jq '.email // empty') || EMAIL=""
 
           if [ -z "$EMAIL" ] || echo "$EMAIL" | grep -q 'noreply'; then
-            echo "::warning::No usable email for PR author ${AUTHOR}; failure DM not sent"
+            echo "::warning::No usable email for release author ${AUTHOR}; failure DM not sent"
             echo "found=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
@@ -135,4 +172,4 @@ jobs:
           errors: true
           payload: |
             channel: "${{ steps.slack_user.outputs.user_id }}"
-            text: ":rotating_light: *Homebrew bottle build failed* for ${{ steps.pr-info.outputs.package }} v${{ steps.pr-info.outputs.version }}\n\n*PR:* <${{ github.event.pull_request.html_url }}|#${{ github.event.pull_request.number }} ${{ github.event.pull_request.title }}>\n*Run:* <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View failed run>"
+            text: ${{ toJSON(steps.message.outputs.text) }}
