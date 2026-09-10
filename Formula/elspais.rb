@@ -192,7 +192,6 @@ class Elspais < Formula
   end
 
   def install
-    python3 = "python3.12"
     virtualenv_create(libexec, python3)
 
     # Install each resource with build isolation enabled and WITHOUT
