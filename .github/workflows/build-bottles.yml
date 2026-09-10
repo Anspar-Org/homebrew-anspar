@@ -17,7 +17,9 @@ jobs:
     steps:
       - name: Set up Homebrew
         id: set-up-homebrew
-        uses: Homebrew/actions/setup-homebrew@master
+        # Pinned to 2026.09.07.1; Homebrew deprecated the floating master ref and
+        # will refuse it at a future release.
+        uses: Homebrew/actions/setup-homebrew@f8d4222eb633e65c2a0157383cf80861fc7fae7f
 
       - name: Cache Homebrew Bundler RubyGems
         uses: actions/cache@v5
