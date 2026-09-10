@@ -1,9 +1,11 @@
 # Slack channel routing for homebrew-anspar CI notifications.
 # Consumed by Cure-HHT/hht_workflows/.github/actions/slack-notify.
 #
-# Only success events route to a named channel; failures DM the PR
-# author via slackapi/slack-github-action directly (no shared-action
-# route, since the shared action only routes named channels).
+# Every leg of a formula update routes to a named channel, so a release
+# that reaches PyPI but not the tap is visible to the whole team and not
+# only to whoever the DM lookup happens to resolve. Failures additionally
+# DM the release author via slackapi/slack-github-action directly (the
+# shared action only routes named channels, not user IDs).
 #
 # The success leg of publish-bottles.yml also upserts a per-package
 # channel bookmark (`<package> latest Homebrew release`) pointing at
@@ -14,3 +16,5 @@ channels:
 
 routing:
   bottle-publish-success:  SLACK_DEV_CH
+  bottle-publish-failure:  SLACK_DEV_CH
+  bottle-build-failure:    SLACK_DEV_CH
