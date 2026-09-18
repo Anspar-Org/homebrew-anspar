@@ -3,14 +3,14 @@ class Elspais < Formula
 
   desc "Requirements validation and traceability tools - L-Space connects all libraries"
   homepage "https://github.com/Anspar-Org/elspais"
-  url "https://files.pythonhosted.org/packages/0d/94/de2ce8fe2070a007f7c73cbda3649a0f9fc456fe979697e6414f8bda5a52/elspais-0.123.3.tar.gz"
-  sha256 "12947db913e7bec31cce9e25f7396d468cc0f8c95785929bd8e005847b527b05"
+  url "https://files.pythonhosted.org/packages/7e/8a/cadb92235518f7b95c36dd2c667ae77df5a7f0cdabe098f195afefbea074/elspais-0.124.11.tar.gz"
+  sha256 "3e4b0736dd8b1736a33fa174ac9d588587946187e9cf592970859c5536bad8ba"
   license "AGPL-3.0-only"
   head "https://github.com/Anspar-Org/elspais.git", branch: "main"
 
   bottle do
-    root_url "https://github.com/Anspar-Org/homebrew-anspar/releases/download/elspais-0.123.3"
-    sha256 cellar: :any, arm64_tahoe: "fb8fd56a939d292fe4b829b2747a231ba2d2f94a6d8eb1b6a39296545c2e7902"
+    root_url "https://github.com/Anspar-Org/homebrew-anspar/releases/download/elspais-0.124.11"
+    sha256 cellar: :any, arm64_tahoe: "b54bfd869c8759c06a70c1ed035d34e879e39353b8c53d3092268582baaa7f95"
   end
 
   depends_on "rust" => :build
@@ -42,8 +42,8 @@ class Elspais < Formula
   end
 
   resource "coverage" do
-    url "https://files.pythonhosted.org/packages/d1/f5/deb1a27aa20746c0278ac998c4179e272004699b2d33959ce020c5ac1615/coverage-7.16.0.tar.gz"
-    sha256 "077f0964087883176ff6ab9b074694cae29f8c708273b13ca62c183c6ed716cd"
+    url "https://files.pythonhosted.org/packages/65/2d/c738872f477f5687152acae68635790387425d407ae37dd3d3a8a6692307/coverage-7.16.1.tar.gz"
+    sha256 "f83981779bcf9dfa06fa0a8d4cb43e0faec1706328ce07aa3e7b665b4ac0f210"
   end
 
   resource "docstring-parser" do
@@ -72,8 +72,8 @@ class Elspais < Formula
   end
 
   resource "idna" do
-    url "https://files.pythonhosted.org/packages/5f/f7/abb373e5757eaec4b922b92f97ec8d6d7e057cf06778247604fbc4e7c3f3/idna-3.19.tar.gz"
-    sha256 "5e0811a4383b21dc5838069f801c4fb62113b7447663d2530d2bd6e77b49bf15"
+    url "https://files.pythonhosted.org/packages/f5/08/8eea9d4b8302028f3abb2c0813953f7aec26d33b7a8960ed760e65ff29fa/idna-3.20.tar.gz"
+    sha256 "a7db850025b95ded1eae8a46181a1a6c56c92c96f0e2b005d9ff8dc0210cab44"
   end
 
   resource "jinja2" do
@@ -127,8 +127,8 @@ class Elspais < Formula
   end
 
   resource "pyjwt" do
-    url "https://files.pythonhosted.org/packages/3b/81/58d0ac84e1ef3a3843791d6954d94c0b33d526c75eeb1efbce9d0a4c4077/pyjwt-2.13.0.tar.gz"
-    sha256 "41571c89ca91598c79e8ef18a2d07367d4810fbbd6f637794879baf1b7703423"
+    url "https://files.pythonhosted.org/packages/af/c3/8a3b59c25070cc61dc517fbdfa5dc0904670c96f605cc69759dc09166b99/pyjwt-2.14.0.tar.gz"
+    sha256 "77283c83fb56ecf566a886c757a714bc83668e38156de2cce8263302f42e0b86"
   end
 
   resource "python-dotenv" do
@@ -187,8 +187,8 @@ class Elspais < Formula
   end
 
   resource "uvicorn" do
-    url "https://files.pythonhosted.org/packages/f2/0f/3f86e61397dd33bf2ccf28188c40db6a740658aeebbbf6e7dbc101a1f487/uvicorn-0.52.4.tar.gz"
-    sha256 "73acfee47a0b133c5de13d219492d62d8a31e935f4fe6e41a232451a15379f86"
+    url "https://files.pythonhosted.org/packages/5d/ad/04bbb797c84fc1f26cb171f7394716f4865ffb8d8c5e1eef42565c2dfa6b/uvicorn-0.53.0.tar.gz"
+    sha256 "a9356f0cb89b3b8621529c5d5eebd69bfe154f4c3f68b4cf2de47e45fa855c2e"
   end
 
   def install
