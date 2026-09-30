@@ -3,8 +3,8 @@ class Elspais < Formula
 
   desc "Requirements validation and traceability tools - L-Space connects all libraries"
   homepage "https://github.com/Anspar-Org/elspais"
-  url "https://files.pythonhosted.org/packages/1b/d1/64233d6a61f70a5411a4549af969967dab67393e88ddee5d2d09d7916ec5/elspais-0.125.29.tar.gz"
-  sha256 "375fac4f1b5684e6324ffa86cec7c6d84f414b7e03f795fc8f2bf8d3f2c9afaa"
+  url "https://files.pythonhosted.org/packages/50/1c/22ed2fe8db834e31c03bd964fb87c182ff655a54d9476eca3905e2945635/elspais-0.125.32.tar.gz"
+  sha256 "149f3339dec3befd0ac6f297a3d418150cbdacf0b875dbd37c65631547f1c130"
   license "AGPL-3.0-only"
   head "https://github.com/Anspar-Org/elspais.git", branch: "main"
 
@@ -42,8 +42,8 @@ class Elspais < Formula
   end
 
   resource "coverage" do
-    url "https://files.pythonhosted.org/packages/65/2d/c738872f477f5687152acae68635790387425d407ae37dd3d3a8a6692307/coverage-7.16.1.tar.gz"
-    sha256 "f83981779bcf9dfa06fa0a8d4cb43e0faec1706328ce07aa3e7b665b4ac0f210"
+    url "https://files.pythonhosted.org/packages/2f/55/d1eaf3e73781174340a00dc1ba2aee8a65f82fadb18e2797b192b6b3925b/coverage-7.16.2.tar.gz"
+    sha256 "ca64d9f1f384f151b9511bec01126072acd2f313439f8ed015a22d8790aab6fa"
   end
 
   resource "docstring-parser" do
@@ -127,8 +127,8 @@ class Elspais < Formula
   end
 
   resource "pyjwt" do
-    url "https://files.pythonhosted.org/packages/02/a5/5197bfd06417837ac079921c66fa6393f1dea3557272a263cebfef69e432/pyjwt-2.15.0.tar.gz"
-    sha256 "b11c5f9791d7bf51c2b39a81ed669f6b2dbbd669df2942f6c60167e9e3d1abe4"
+    url "https://files.pythonhosted.org/packages/43/ea/5194e52748b0da83d71e082d75496eaec6e58f419f5e184786ded517e6a9/pyjwt-2.15.1.tar.gz"
+    sha256 "4f259e80cdfb6b3fc18a7de51fd1ef9ec79652f25019bae68975ca2468a34df8"
   end
 
   resource "python-dotenv" do
@@ -152,8 +152,8 @@ class Elspais < Formula
   end
 
   resource "sse-starlette" do
-    url "https://files.pythonhosted.org/packages/2b/54/6767bb789b2f2fed6e0f953df949cd39dc263a384c1b65a95232598621d6/sse_starlette-3.4.11.tar.gz"
-    sha256 "1bae716c02f3e6f294be41ff333220692dae7c3cbab077c900f159676719dade"
+    url "https://files.pythonhosted.org/packages/e4/be/0123026f719d1a7936f214a88b553bb5701e04ff2511147c1dab0c5035eb/sse_starlette-3.5.0.tar.gz"
+    sha256 "75de713aa8a9441513cc283220826da079d982770965b951e9437720e8bafdb2"
   end
 
   resource "starlette" do
@@ -187,8 +187,8 @@ class Elspais < Formula
   end
 
   resource "uvicorn" do
-    url "https://files.pythonhosted.org/packages/5d/ad/04bbb797c84fc1f26cb171f7394716f4865ffb8d8c5e1eef42565c2dfa6b/uvicorn-0.53.0.tar.gz"
-    sha256 "a9356f0cb89b3b8621529c5d5eebd69bfe154f4c3f68b4cf2de47e45fa855c2e"
+    url "https://files.pythonhosted.org/packages/da/34/30e9280707135d2cfc589dfff3cb796bd07a3aeb1a3e415ba09dd89d7bb4/uvicorn-0.54.0.tar.gz"
+    sha256 "a2e33cbfaa0306f8e6b0c13e0cb89d7d7a2da3e62b90c66e18c33d9807b28620"
   end
 
   def install
