@@ -3,14 +3,14 @@ class Elspais < Formula
 
   desc "Requirements validation and traceability tools - L-Space connects all libraries"
   homepage "https://github.com/Anspar-Org/elspais"
-  url "https://files.pythonhosted.org/packages/50/1c/22ed2fe8db834e31c03bd964fb87c182ff655a54d9476eca3905e2945635/elspais-0.125.32.tar.gz"
-  sha256 "149f3339dec3befd0ac6f297a3d418150cbdacf0b875dbd37c65631547f1c130"
+  url "https://files.pythonhosted.org/packages/ee/25/c6cf3ea81056198bde2f5d75c4e337ac79808d28f3c67f475088d438bad4/elspais-0.125.35.tar.gz"
+  sha256 "daf947e0e412c8cad78d832f5cad5a2896b9236a83b56baf8133a2cfb6df9a37"
   license "AGPL-3.0-only"
   head "https://github.com/Anspar-Org/elspais.git", branch: "main"
 
   bottle do
-    root_url "https://github.com/Anspar-Org/homebrew-anspar/releases/download/elspais-0.125.32"
-    sha256 cellar: :any, arm64_tahoe: "e7b7d0e7272562ab7cce2efbca7dd50f6ec9f1fe96ba465a79b4e1b002606b6d"
+    root_url "https://github.com/Anspar-Org/homebrew-anspar/releases/download/elspais-0.125.35"
+    sha256 cellar: :any, arm64_tahoe: "b2708f567eda8cb8f5c03c632ffa3714e0a6660d85d4bed7e83973f56752bea4"
   end
 
   depends_on "rust" => :build
@@ -132,8 +132,8 @@ class Elspais < Formula
   end
 
   resource "python-dotenv" do
-    url "https://files.pythonhosted.org/packages/6a/53/ed9d74092561d4b01a2ef1349d52cdbc135e526c245f366b089cfca6de49/python_dotenv-1.2.3.tar.gz"
-    sha256 "a20a594dabeaa385725aa239d5244871c143ecb356add8a20fcf23773a6c3a35"
+    url "https://files.pythonhosted.org/packages/74/26/2fbeedb218a787a5eea551c7532cac4e009f83d689dd2faa0d0353473f86/python_dotenv-1.2.4.tar.gz"
+    sha256 "f0d53e69935a851c0dcc78f3ab7aaccd8cabef0b92382b576b824212902873c0"
   end
 
   resource "python-multipart" do
