@@ -3,8 +3,8 @@ class Elspais < Formula
 
   desc "Requirements validation and traceability tools - L-Space connects all libraries"
   homepage "https://github.com/Anspar-Org/elspais"
-  url "https://files.pythonhosted.org/packages/fc/50/d4a112450acae45b067ea93312a55b1630e4e6f41c844faf1577e39a4b76/elspais-0.125.41.tar.gz"
-  sha256 "1aed8c448501bc3f65f058bfcbf056b4a0e29a1db4e7dfdff784342403e43e44"
+  url "https://files.pythonhosted.org/packages/88/73/7e34970fb3c18bd0b9da3a80d89bb9be40effcaec44332d04b70532de9a5/elspais-0.125.45.tar.gz"
+  sha256 "d908e38f720ebdd6f79bdc27e6f7e41f4dfec2258d58ccee0761352f05428ff7"
   license "AGPL-3.0-only"
   head "https://github.com/Anspar-Org/elspais.git", branch: "main"
 
@@ -97,8 +97,8 @@ class Elspais < Formula
   end
 
   resource "markupsafe" do
-    url "https://files.pythonhosted.org/packages/7e/99/7690b6d4034fffd95959cbe0c02de8deb3098cc577c67bb6a24fe5d7caa7/markupsafe-3.0.3.tar.gz"
-    sha256 "722695808f4b6457b320fdc131280796bdceb04ab50fe1795cd540799ebe1698"
+    url "https://files.pythonhosted.org/packages/38/9b/e422a865e1d5d57d0e509b4e0bf1c1a70a7f6382c29a5aa428df994c8bc8/markupsafe-3.0.4.tar.gz"
+    sha256 "2e9ad7dd851bf45fab9f75cbff4cb493fee9979e8d8c7c9c3ee119022518edd6"
   end
 
   resource "mcp" do
