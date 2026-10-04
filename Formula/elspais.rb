@@ -3,8 +3,8 @@ class Elspais < Formula
 
   desc "Requirements validation and traceability tools - L-Space connects all libraries"
   homepage "https://github.com/Anspar-Org/elspais"
-  url "https://files.pythonhosted.org/packages/88/73/7e34970fb3c18bd0b9da3a80d89bb9be40effcaec44332d04b70532de9a5/elspais-0.125.45.tar.gz"
-  sha256 "d908e38f720ebdd6f79bdc27e6f7e41f4dfec2258d58ccee0761352f05428ff7"
+  url "https://files.pythonhosted.org/packages/ce/95/f7c47b2b0a588af90f1a01e572a05abf6a74307cebb1af4045ff9fd8773d/elspais-0.125.51.tar.gz"
+  sha256 "0a93079c51e42ee4e328263d19a0eb73d6bc89a045ffb6d9f5f9733faac872fc"
   license "AGPL-3.0-only"
   head "https://github.com/Anspar-Org/elspais.git", branch: "main"
 
