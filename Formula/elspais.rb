@@ -3,8 +3,8 @@ class Elspais < Formula
 
   desc "Requirements validation and traceability tools - L-Space connects all libraries"
   homepage "https://github.com/Anspar-Org/elspais"
-  url "https://files.pythonhosted.org/packages/ce/95/f7c47b2b0a588af90f1a01e572a05abf6a74307cebb1af4045ff9fd8773d/elspais-0.125.51.tar.gz"
-  sha256 "0a93079c51e42ee4e328263d19a0eb73d6bc89a045ffb6d9f5f9733faac872fc"
+  url "https://files.pythonhosted.org/packages/34/7f/05b4a31b22bc9df203f020577578e77ca520c9e2815a20a14979d09f37b2/elspais-0.125.53.tar.gz"
+  sha256 "aa80e0f13d54b73cf6ca2957b4881a3c3e0f3ec34f90f4887f331d6f97573103"
   license "AGPL-3.0-only"
   head "https://github.com/Anspar-Org/elspais.git", branch: "main"
 
@@ -147,8 +147,8 @@ class Elspais < Formula
   end
 
   resource "rpds-py" do
-    url "https://files.pythonhosted.org/packages/aa/2a/9618a122aeb2a169a28b03889a2995fe297588964333d4a7d67bdf46e147/rpds_py-2026.6.3.tar.gz"
-    sha256 "1cebd1337c242e4ec2293e541f712b2da849b29f48f0c293684b71c0632625d4"
+    url "https://files.pythonhosted.org/packages/42/68/3bd46b8a5e01d3c2ebdf9c5e9497912e3fe0cde02bac21a7130ca866e403/rpds_py-2026.9.1.tar.gz"
+    sha256 "4793ef7f78268b124b73fa933440f01d258bbae01de9fa53e9080c9ab0425a12"
   end
 
   resource "sse-starlette" do
